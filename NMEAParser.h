@@ -11,8 +11,6 @@
 #endif // _MSC_VER > 1000
 
 
-//#define NP_MAX_CMD_LEN			8		// maximum command length (NMEA address)
-//#define NP_MAX_DATA_LEN			256		// maximum data length
 #define NP_MAX_CHAN				36		// maximum number of channels
 #define NP_WAYPOINT_ID_LEN		32		// waypoint max string len
 
@@ -118,13 +116,6 @@ public:
 	BYTE m_btZDALocalZoneMinute;		// 0 - 59
 	DWORD m_dwZDACount;					//
 
-
-//	DOUBLE m_latitude;
-//	DOUBLE m_longitude;
-//	DOUBLE m_altitude;
-//	ULONG m_nSentences;
-//	UINT m_signalQuality;
-//	UINT m_satelitesInUse;
 };
 
 class NMEAParser  
@@ -137,11 +128,8 @@ public:
 	GPSInfo& GetActualGPSInfo();
 	GPSInfo m_GPSInfo;
 
-
 private:
-  //	CFile m_outputFile;
-
-	void ParseRecursive(const CHAR ch);
+  void ParseRecursive(const CHAR ch);
 	void ParseNMEASentence(const CHAR *addressField, 
 		                   const CHAR *buf, const UINT bufSize);
 	void ProcessGPGGA(const CHAR *buf, const UINT bufSize);
@@ -150,9 +138,6 @@ private:
 	void ProcessGPRMB(const CHAR *buf, const UINT bufSize);
 	void ProcessGPRMC(const CHAR *buf, const UINT bufSize);
 	void ProcessGPZDA(const CHAR *buf, const UINT bufSize);
-
-//	BOOL m_logging;
-
 
 };
 
