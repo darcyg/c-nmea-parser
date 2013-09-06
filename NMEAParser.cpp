@@ -544,15 +544,49 @@ void NMEAParser::ProcessGPGSA(const CHAR *buf, const UINT bufSize)
 	BYTE fix = atoi(auxBuf);
 
 	// Active satellites
+	for(int i = 0; i < 12; i++)
+	{
+	  if((UINT)(p1 - buf) >= bufSize)
+		return;
+	  if((p2 = strchr(p1, ',')) == NULL)
+		return;
+			strncpy(auxBuf, p1, p2 - p1);
+			auxBuf[p2 - p1] = '\0';
 
+			m_GPSInfo.m_wGSASatsInSolution[i] = atoi(auxBuf);  // directly on var this time
+			p1 = p2 + 1;
+	}
 
 	// PDOP
-
+	  if((UINT)(p1 - buf) >= bufSize)
+		return;
+	  if((p2 = strchr(p1, ',')) == NULL)
+		return;
+			strncpy(auxBuf, p1, p2 - p1);
+			auxBuf[p2 - p1] = '\0';
+			m_GPSInfo.m_dGSAPDOP = atof(auxBuf);              // directly on var this time
+			p1 = p2 + 1;
 
 	// HDOP
-
+	  if((UINT)(p1 - buf) >= bufSize)
+		return;
+	  if((p2 = strchr(p1, ',')) == NULL)
+		return;
+			strncpy(auxBuf, p1, p2 - p1);
+			auxBuf[p2 - p1] = '\0';
+			m_GPSInfo.m_dGSAHDOP = atof(auxBuf);              // directly on var this time
+			p1 = p2 + 1;
 
 	// VDOP
+	  if((UINT)(p1 - buf) >= bufSize)
+		return;
+	  if((p2 = strchr(p1, ',')) == NULL)
+		return;
+			strncpy(auxBuf, p1, p2 - p1);
+			auxBuf[p2 - p1] = '\0';
+			m_GPSInfo.m_dGSAVDOP = atof(auxBuf);              // directly on var this time
+			p1 = p2 + 1;
+
 
 		m_GPSInfo.m_btGSAMode = mode;
 		m_GPSInfo.m_btGSAFixMode = fix;
