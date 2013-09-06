@@ -2,7 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include "NMEAParser.h"
-#include <stdio.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -15,25 +14,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 NMEAParser::NMEAParser()
 {
-//  m_logging = FALSE;
-
-	 m_GPSInfo.m_dwCommandCount = 0;
-
-	 m_GPSInfo.m_btGGAHour = 0;
-	 m_GPSInfo.m_btGGAMinute = 0;
-	 m_GPSInfo.m_btGGASecond = 0;
-	 m_GPSInfo.m_dGGALatitude = 0;
-	 m_GPSInfo.m_dGGALongitude = 0;
-	 m_GPSInfo.m_btGGAGPSQuality = 0;
-	 m_GPSInfo.m_btGGANumOfSatsInUse = 0;
-	 m_GPSInfo.m_dGGAHDOP = 0;
-	 m_GPSInfo.m_dGGAAltitude = 0;
-	 m_GPSInfo.m_dwGGACount = 0;
-	 m_GPSInfo.m_nGGAOldVSpeedSeconds = 0;
-	 m_GPSInfo.m_dGGAOldVSpeedAlt = 0;
-	 m_GPSInfo.m_dGGAVertSpeed = 0;
-	 m_GPSInfo.m_dGGAHGEOID = 0;
-
+//	 m_GPSInfo.m_dwCommandCount = 0;
 }
 //---------------------------------------------------------------------------
 NMEAParser::NMEAParser(LPCTSTR outputFileName)
@@ -57,7 +38,7 @@ int axtoi( const CHAR *hexStg )
   int digit[5];      // hold values to convert
   while (n < 4)
   {
-     if (hexStg[n]=='\0')
+	 if (hexStg[n]=='\0')
         break;
      if (hexStg[n] > 0x29 && hexStg[n] < 0x40 ) //if 0 to 9
         digit[n] = hexStg[n] & 0x0f;            //convert to int
@@ -66,7 +47,7 @@ int axtoi( const CHAR *hexStg )
      else if (hexStg[n] >='A' && hexStg[n] <= 'F') //if A to F
         digit[n] = (hexStg[n] & 0x0f) + 9;      //convert to int
      else break;
-    n++;
+	n++;
   }
   count = n;
   m = n - 1;
@@ -90,7 +71,7 @@ void NMEAParser::Parse(const CHAR *buf, const UINT bufSize)
 void NMEAParser::ParseRecursive(const CHAR ch)
 {	
   enum NMEAParserState { SearchForSOS = 1,
-                         RetrieveAddressField,
+						 RetrieveAddressField,
                          ReceiveSentenceData,
                          GetFirstChecksumCharacter,
                          GetSecondChecksumCharacter,
@@ -114,7 +95,7 @@ void NMEAParser::ParseRecursive(const CHAR ch)
     {
 	  if( ch == '$' )
 	  {
-	    m_AddressFieldIndex = 0;
+		m_AddressFieldIndex = 0;
 	    m_NMEASequenceIndex = 0;
 	    m_CalcChecksum = 0;
 	    m_State = RetrieveAddressField;
@@ -126,7 +107,7 @@ void NMEAParser::ParseRecursive(const CHAR ch)
     {
       if( m_NMEASequenceIndex == NMEA_SEQUENCE_MAX_LENGTH - 1 )
         m_State = SearchForSOS;
-      else
+	  else
       {
         m_NMEASequence[m_NMEASequenceIndex++] = ch;
         m_CalcChecksum ^= ch;
@@ -138,7 +119,7 @@ void NMEAParser::ParseRecursive(const CHAR ch)
 	    else if( m_AddressFieldIndex == ADDRESS_FIELD_MAX_LENGTH - 1 ||
 	             !isalpha(ch) || islower(ch) )
 	      m_State = SearchForSOS;
-	    else
+		else
 		  m_AddressField[m_AddressFieldIndex++] = ch;
 	  }
 	  break;
@@ -150,7 +131,7 @@ void NMEAParser::ParseRecursive(const CHAR ch)
         m_State = SearchForSOS;
       else
       {
-        m_NMEASequence[m_NMEASequenceIndex++] = ch;
+		m_NMEASequence[m_NMEASequenceIndex++] = ch;
   	    if( ch == '*' )
  	      m_State = GetFirstChecksumCharacter;
  	    else if( ch == 10 )
@@ -174,7 +155,7 @@ void NMEAParser::ParseRecursive(const CHAR ch)
           ( !isdigit(ch) && ( ch < 'A' || ch > 'F' ) ) )
         m_State = SearchForSOS;
       else
-      {
+	  {
         m_NMEASequence[m_NMEASequenceIndex++] = ch;
 		m_Checksum[0] = ch;
 		m_State = GetSecondChecksumCharacter;
@@ -186,7 +167,7 @@ void NMEAParser::ParseRecursive(const CHAR ch)
     {
       if( m_NMEASequenceIndex == NMEA_SEQUENCE_MAX_LENGTH - 1 ||
           ( !isdigit(ch) && ( ch < 'A' || ch > 'F' ) ) )
-        m_State = SearchForSOS;
+		m_State = SearchForSOS;
       else
       {
         m_NMEASequence[m_NMEASequenceIndex++] = ch;
@@ -210,7 +191,7 @@ void NMEAParser::ParseRecursive(const CHAR ch)
       {
         m_NMEASequence[m_NMEASequenceIndex++] = ch;
         m_NMEASequence[m_NMEASequenceIndex] = '\0';
-        ParseNMEASentence( m_AddressField, m_NMEASequence, m_NMEASequenceIndex );
+		ParseNMEASentence( m_AddressField, m_NMEASequence, m_NMEASequenceIndex );
   	    m_State = SearchForSOS;
       }
 	  break;
@@ -330,7 +311,7 @@ void NMEAParser::ProcessGPGGA(const CHAR *buf, const UINT bufSize)
 	sec = atoi(auxBuf);
 	p1 = p2 + 1;
 
-    // Latitude
+	// Latitude
 	if((UINT)(p1 - buf) >= bufSize)
 		return;
 	if((p2 = strchr(p1, ',')) == NULL)
@@ -498,7 +479,7 @@ Where:
      A        Auto selection of 2D or 3D fix (M = manual)
      3        3D fix - values include: 1 = no fix
                                        2 = 2D fix
-                                       3 = 3D fix
+									   3 = 3D fix
      04,05... PRNs of satellites used for fix (space for 12)
      2.5      PDOP (dilution of precision)
      1.3      Horizontal dilution of precision (HDOP)
@@ -552,8 +533,12 @@ void NMEAParser::ProcessGPGSA(const CHAR *buf, const UINT bufSize)
 		return;
 			strncpy(auxBuf, p1, p2 - p1);
 			auxBuf[p2 - p1] = '\0';
-
-			m_GPSInfo.m_wGSASatsInSolution[i] = atoi(auxBuf);  // directly on var this time
+			if (auxBuf[0] == '\0') {
+			  m_GPSInfo.m_wGSASatsInSolution[i] = 0;
+			}
+			else {
+			  m_GPSInfo.m_wGSASatsInSolution[i] = atoi(auxBuf);  // directly on var this time
+			}
 			p1 = p2 + 1;
 	}
 
@@ -580,7 +565,7 @@ void NMEAParser::ProcessGPGSA(const CHAR *buf, const UINT bufSize)
 	// VDOP
 	  if((UINT)(p1 - buf) >= bufSize)
 		return;
-	  if((p2 = strchr(p1, ',')) == NULL)
+	  if((p2 = strchr(p1, '*')) == NULL)
 		return;
 			strncpy(auxBuf, p1, p2 - p1);
 			auxBuf[p2 - p1] = '\0';
@@ -591,12 +576,157 @@ void NMEAParser::ProcessGPGSA(const CHAR *buf, const UINT bufSize)
 		m_GPSInfo.m_btGSAMode = mode;
 		m_GPSInfo.m_btGSAFixMode = fix;
 
-
   m_GPSInfo.m_dwGSACount++;
 }
 //---------------------------------------------------------------------------
+/*
+  $GPGSV,2,1,08,01,40,083,46,02,17,308,41,12,07,344,39,14,22,228,45*75
+
+Where:
+      GSV          Satellites in view
+      2            Number of sentences for full data
+      1            sentence 1 of 2
+      08           Number of satellites in view
+
+      01           Satellite PRN number
+      40           Elevation, degrees
+      083          Azimuth, degrees
+      46           SNR - higher is better
+           for up to 4 satellites per sentence
+	  *75          the checksum data, always begins with *
+
+*/
+//---------------------------------------------------------------------------
 void NMEAParser::ProcessGPGSV(const CHAR *buf, const UINT bufSize)
 {
+	INT nTotalNumOfMsg, nMsgNum;
+	CHAR auxBuf[10];
+	const CHAR *p1 = buf, *p2;
+
+	//
+	if((UINT)(p1 - buf) >= bufSize)
+		return;
+	if(bufSize < 6)
+		return;
+	strncpy(auxBuf, buf, 5);
+	auxBuf[5] = '\0';
+	if(strcmp(auxBuf, "GPGSV") != 0 || buf[5] != ',')
+		return;
+	p1 += 6;
+
+	//
+	// nr of setences
+	//
+	if((UINT)(p1 - buf) >= bufSize)
+		return;
+	if((p2 = strchr(p1, ',')) == NULL)
+		return;
+	strncpy(auxBuf, p1, p2 - p1);
+	auxBuf[p2 - p1] = '\0';
+
+	nTotalNumOfMsg =   atoi(auxBuf);
+
+	if(nTotalNumOfMsg > 9 || nTotalNumOfMsg < 0)
+		return;
+	if(nTotalNumOfMsg < 1 || nTotalNumOfMsg*4 >= NP_MAX_CHAN)
+		return;
+	 p1 = p2 + 1;
+
+	//
+	// message number
+	//
+	if((UINT)(p1 - buf) >= bufSize)
+		return;
+	if((p2 = strchr(p1, ',')) == NULL)
+		return;
+	strncpy(auxBuf, p1, p2 - p1);
+	auxBuf[p2 - p1] = '\0';
+
+	nMsgNum = atoi(auxBuf);
+
+	if(nMsgNum > 9 || nMsgNum < 0)       // make sure is valid
+		return;
+	p1 = p2 + 1;
+
+
+	//
+	// Total satellites in view
+	//
+
+	if((UINT)(p1 - buf) >= bufSize)
+		return;
+	if((p2 = strchr(p1, ',')) == NULL)
+		return;
+	strncpy(auxBuf, p1, p2 - p1);
+	auxBuf[p2 - p1] = '\0';
+
+	m_GPSInfo.m_wGSVTotalNumSatsInView =  atoi(auxBuf);
+	p1 = p2 + 1;
+
+	//
+	// Satelite data
+	//
+
+
+ for(int i = 0; i < 4; i++)
+	{
+		// Satellite ID
+		if((UINT)(p1 - buf) >= bufSize)
+			return;
+		if((p2 = strchr(p1, ',')) == NULL)
+			return;
+		strncpy(auxBuf, p1, p2 - p1);
+		auxBuf[p2 - p1] = '\0';
+		p1 = p2 + 1;
+
+		m_GPSInfo.m_GSVSatInfo[i+(nMsgNum-1)*4].m_wPRN = atoi(auxBuf);
+
+		// Elevation
+		if((UINT)(p1 - buf) >= bufSize)
+			return;
+		if((p2 = strchr(p1, ',')) == NULL)
+			return;
+		strncpy(auxBuf, p1, p2 - p1);
+		auxBuf[p2 - p1] = '\0';
+		p1 = p2 + 1;
+
+		m_GPSInfo.m_GSVSatInfo[i+(nMsgNum-1)*4].m_wElevation =  atoi(auxBuf);
+
+		// Azimuth
+		if((UINT)(p1 - buf) >= bufSize)
+			return;
+		if((p2 = strchr(p1, ',')) == NULL)
+			return;
+		strncpy(auxBuf, p1, p2 - p1);
+		auxBuf[p2 - p1] = '\0';
+		p1 = p2 + 1;
+
+		m_GPSInfo.m_GSVSatInfo[i+(nMsgNum-1)*4].m_wAzimuth  =  atoi(auxBuf);
+
+		// SNR
+		if((UINT)(p1 - buf) >= bufSize)
+			return;
+
+		if (i==3) {
+			if((p2 = strchr(p1, '*')) == NULL)
+			 return;
+
+		}
+		else{
+			if((p2 = strchr(p1, ',')) == NULL)
+			 return;
+		}
+
+		strncpy(auxBuf, p1, p2 - p1);
+		auxBuf[p2 - p1] = '\0';
+		p1 = p2 + 1;
+
+		m_GPSInfo.m_GSVSatInfo[i+(nMsgNum-1)*4].m_wSignalQuality =  atoi(auxBuf);
+
+		// Update "used in solution" (m_bUsedInSolution) flag.
+		m_GPSInfo.m_GSVSatInfo[i+(nMsgNum-1)*4].m_bUsedInSolution = IsSatUsedInSolution(m_GPSInfo.m_GSVSatInfo[i+(nMsgNum-1)*4].m_wPRN);
+	 }
+
    m_GPSInfo.m_dwGSVCount++;
 }
 //---------------------------------------------------------------------------
@@ -788,15 +918,15 @@ void NMEAParser::ProcessGPRMC(const CHAR *buf, const UINT bufSize)
 	m_GPSInfo.m_btRMCHour = hour;					//
 	m_GPSInfo.m_btRMCMinute = min;					//
 	m_GPSInfo.m_btRMCSecond = sec;					//
- //	BYTE m_btRMCDataValid;				// A = Data valid, V = navigation rx warning
-	m_GPSInfo.m_dRMCLatitude = latitude;				// current latitude
-	m_GPSInfo.m_dRMCLongitude = longitude;				// current longitude
-	m_GPSInfo.m_dRMCGroundSpeed = groundSpeed;			// speed over ground, knots
-	m_GPSInfo.m_dRMCCourse = courseOverGround;				// course over ground, degrees true
-	m_GPSInfo.m_btRMCDay = day;					//
+ //	BYTE m_btRMCDataValid;			            	// A = Data valid, V = navigation rx warning
+	m_GPSInfo.m_dRMCLatitude = latitude;			// current latitude
+	m_GPSInfo.m_dRMCLongitude = longitude;			// current longitude
+	m_GPSInfo.m_dRMCGroundSpeed = groundSpeed;		// speed over ground, knots
+	m_GPSInfo.m_dRMCCourse = courseOverGround;		// course over ground, degrees true
+	m_GPSInfo.m_btRMCDay = day;				     	//
 	m_GPSInfo.m_btRMCMonth = month;					//
 	m_GPSInfo.m_wRMCYear = year;					//
-	m_GPSInfo.m_dRMCMagVar = magneticVariation;				// magnitic variation, degrees East(+)/West(-)
+	m_GPSInfo.m_dRMCMagVar = magneticVariation;		// magnitic variation, degrees East(+)/West(-)
 
 	m_GPSInfo.m_dwRMCCount++;
 }
@@ -804,5 +934,18 @@ void NMEAParser::ProcessGPRMC(const CHAR *buf, const UINT bufSize)
 void NMEAParser::ProcessGPZDA(const CHAR *buf, const UINT bufSize)
 {
    m_GPSInfo.m_dwZDACount++;
+}
+//---------------------------------------------------------------------------
+BOOL NMEAParser::IsSatUsedInSolution(WORD wSatID)
+{
+	if(wSatID == 0) return FALSE;
+	for(int i = 0; i < 12; i++)
+	{
+		if(wSatID ==  m_GPSInfo.m_wGSASatsInSolution[i])
+		{
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 //---------------------------------------------------------------------------
