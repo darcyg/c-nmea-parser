@@ -6,10 +6,10 @@
 #define AFX_NMEAPARSER_H__26C0F55B_19A8_4E71_A1BA_A2EBA169FCEB__INCLUDED_
 
 #include <windows.h>
+
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-
 
 #define NP_MAX_CHAN				36		// maximum number of channels
 #define NP_WAYPOINT_ID_LEN		32		// waypoint max string len
@@ -28,7 +28,7 @@ struct GPSInfo
 {
 public:
 
-	DWORD m_dwCommandCount;            // number of NMEA commands received (processed)
+	DWORD m_dwCommandCount;             // number of NMEA commands received (processed)
 
 	//
 	// GPGGA Data
@@ -51,7 +51,7 @@ public:
 	double m_dGGAVertSpeed;
 
 
-		//
+	//
 	// GPGSA
 	//
 	BYTE m_btGSAMode;					// M = manual, A = automatic 2D/3D
@@ -65,10 +65,10 @@ public:
 	//
 	// GPGSV
 	//
-	BYTE m_btGSVTotalNumOfMsg;			//
-	WORD m_wGSVTotalNumSatsInView;		//
+  //	BYTE m_btGSVTotalNumOfMsg;			    //
+	WORD m_wGSVTotalNumSatsInView;	       	//
 	CNPSatInfo m_GSVSatInfo[NP_MAX_CHAN];	//
-	DWORD m_dwGSVCount;					//
+	DWORD m_dwGSVCount;					    //
 
 	//
 	// GPRMB
@@ -115,7 +115,6 @@ public:
 	BYTE m_btZDALocalZoneHour;			// 0 to +/- 13
 	BYTE m_btZDALocalZoneMinute;		// 0 - 59
 	DWORD m_dwZDACount;					//
-
 };
 
 class NMEAParser  
@@ -128,17 +127,18 @@ public:
 	GPSInfo& GetActualGPSInfo();
 	GPSInfo m_GPSInfo;
 
+
 private:
-  void ParseRecursive(const CHAR ch);
-	void ParseNMEASentence(const CHAR *addressField, 
-		                   const CHAR *buf, const UINT bufSize);
+    BOOL IsSatUsedInSolution(WORD wSatID);
+	void ParseRecursive(const CHAR ch);
+	void ParseNMEASentence(const CHAR *addressField,
+						   const CHAR *buf, const UINT bufSize);
 	void ProcessGPGGA(const CHAR *buf, const UINT bufSize);
 	void ProcessGPGSA(const CHAR *buf, const UINT bufSize);
 	void ProcessGPGSV(const CHAR *buf, const UINT bufSize);
 	void ProcessGPRMB(const CHAR *buf, const UINT bufSize);
 	void ProcessGPRMC(const CHAR *buf, const UINT bufSize);
 	void ProcessGPZDA(const CHAR *buf, const UINT bufSize);
-
 };
 
 #endif // !defined(AFX_NMEAPARSER_H__26C0F55B_19A8_4E71_A1BA_A2EBA169FCEB__INCLUDED_)
