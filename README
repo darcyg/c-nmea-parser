@@ -1,1 +1,6 @@
-This code is based on the 
+This code is based on the CNMEA Parser found on http://sourceforge.net/projects/cppnmeaparser/
+
+It is being completed to support all NMEA commands available.
+
+
+Send beer, goods, new gps to test to: madinfo71@gmail.com
