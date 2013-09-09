@@ -931,8 +931,96 @@ void NMEAParser::ProcessGPRMC(const CHAR *buf, const UINT bufSize)
 	m_GPSInfo.m_dwRMCCount++;
 }
 //---------------------------------------------------------------------------
+/*
+  $GPZDA,hhmmss.ss,dd,mm,yyyy,xx,yy*CC
+  $GPZDA,201530.00,04,07,2002,00,00*60
+
+where:
+	hhmmss    HrMinSec(UTC)
+        dd,mm,yyy Day,Month,Year
+        xx        local zone hours -13..13
+        yy        local zone minutes 0..59
+        *CC       checksum
+
+*/
 void NMEAParser::ProcessGPZDA(const CHAR *buf, const UINT bufSize)
 {
+        CHAR auxBuf[10];
+        const CHAR *p1 = buf, *p2;
+
+        if((UINT)(p1 - buf) >= bufSize)
+                return;
+        if(bufSize < 6)
+                return;
+        strncpy(auxBuf, buf, 5);
+        auxBuf[5] = '\0';
+        if(strcmp(auxBuf, "GPZDA") != 0 || buf[5] != ',')
+                return;
+        p1 += 6;
+
+        // Time
+        if((UINT)(p1 - buf) >= bufSize)
+                return;
+        if((p2 = strchr(p1, ',')) == NULL)
+                return;
+        UINT hour, min, sec;
+        strncpy(auxBuf, p1, 2);
+        auxBuf[2] = '\0';
+        hour = atoi(auxBuf);
+        p1 += 2;
+        strncpy(auxBuf, p1, 2);
+        auxBuf[2] = '\0';
+        min = atoi(auxBuf);
+        p1 += 2;
+        strncpy(auxBuf, p1, 2);
+        auxBuf[2] = '\0';
+        sec = atoi(auxBuf);
+        p1 = p2 + 1;
+
+
+        // Date
+        if((UINT)(p1 - buf) >= bufSize)
+                return;
+        if((p2 = strchr(p1, ',')) == NULL)
+                return;
+        UINT day, month, year;
+        strncpy(auxBuf, p1, 2);
+        auxBuf[2] = '\0';
+        day = atoi(auxBuf);
+        p1 += 2;
+        strncpy(auxBuf, p1, 2);
+        auxBuf[2] = '\0';
+        month = atoi(auxBuf);
+        p1 += 2;
+        strncpy(auxBuf, p1, 2);
+        auxBuf[2] = '\0';
+        year = atoi(auxBuf); // full date on this one
+        p1 = p2 + 1;		
+		
+		// Local Zone Time Hour
+        if((UINT)(p1 - buf) >= bufSize)
+                return;
+        if((p2 = strchr(p1, ',')) == NULL)
+                return;
+        strncpy(auxBuf, p1, p2 - p1);
+        auxBuf[p2 - p1] = '\0';
+
+        UINT LocalTimeHour;
+		LocalTimeHour =  atoi(auxBuf);
+        p1 = p2 + 1;		
+		
+		//Local Zone Time Min
+	    if((UINT)(p1 - buf) >= bufSize)
+                return;
+        if((p2 = strchr(p1, '*')) == NULL)
+                return;
+        strncpy(auxBuf, p1, p2 - p1);
+        auxBuf[p2 - p1] = '\0';
+		UINT LocalTimeMin;
+		
+        LocalTimeMin = atof(auxBuf);              // directly on var this time
+//        p1 = p2 + 1;
+		
    m_GPSInfo.m_dwZDACount++;
 }
 //---------------------------------------------------------------------------
