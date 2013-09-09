@@ -730,8 +730,47 @@ void NMEAParser::ProcessGPGSV(const CHAR *buf, const UINT bufSize)
    m_GPSInfo.m_dwGSVCount++;
 }
 //---------------------------------------------------------------------------
+/*
+  $GPRMB,A,0.66,L,003,004,4917.24,N,12309.57,W,001.3,052.5,000.5,V*20
+
+where:
+           RMB          Recommended minimum navigation information
+           A            Data status A = OK, V = Void (warning)
+           0.66,L       Cross-track error (nautical miles, 9.99 max),
+                                steer Left to correct (or R = right)
+           003          Origin waypoint ID
+           004          Destination waypoint ID
+           4917.24,N    Destination waypoint latitude 49 deg. 17.24 min. N
+           12309.57,W   Destination waypoint longitude 123 deg. 09.57 min. W
+           001.3        Range to destination, nautical miles (999.9 max)
+           052.5        True bearing to destination
+           000.5        Velocity towards destination, knots
+           V            Arrival alarm  A = arrived, V = not arrived
+           *20          checksum
+
+*/
 void NMEAParser::ProcessGPRMB(const CHAR *buf, const UINT bufSize)
 {
+        CHAR auxBuf[10];
+        const CHAR *p1 = buf, *p2;
+
+        // RMB
+        if((UINT)(p1 - buf) >= bufSize)
+                return;
+        if(bufSize < 6)
+                return;
+        strncpy(auxBuf, buf, 5);
+        auxBuf[5] = '\0';
+        if(strcmp(auxBuf, "GPRMB") != 0 || buf[5] != ',')
+                return;
+        p1 += 6;
+
+		
+		
+		
+		
+
+
    m_GPSInfo.m_dwRMBCount++;
 }
 //---------------------------------------------------------------------------
