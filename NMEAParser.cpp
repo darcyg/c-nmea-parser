@@ -200,35 +200,117 @@ void NMEAParser::ParseRecursive(const CHAR ch)
 
 }
 //---------------------------------------------------------------------------
-void NMEAParser::ParseNMEASentence(const CHAR *addressField,
-								   const CHAR *buf, const UINT bufSize)
+void NMEAParser::ParseNMEASentence(const CHAR *addressField, const CHAR *buf, const UINT bufSize)
 {
-	if( strcmp(addressField, "GPGGA") == NULL )
-	{
-		ProcessGPGGA(buf, bufSize);
-	}
-	else if( strcmp(addressField, "GPGSA") == NULL )
-	{
-		ProcessGPGSA(buf, bufSize);
-	}
-	else if( strcmp(addressField, "GPGSV") == NULL )
-	{
-		ProcessGPGSV(buf, bufSize);
-	}
-	else if( strcmp(addressField, "GPRMB") == NULL )
-	{
-		ProcessGPRMB(buf, bufSize);
-	}
-	else if( strcmp(addressField, "GPRMC") == NULL )
-	{
-		ProcessGPRMC(buf, bufSize);
-	}
-	else if( strcmp(addressField, "GPZDA") == NULL )
-	{
-		ProcessGPZDA(buf, bufSize);
-	}
+        if( strcmp(addressField, "GPGGA") == NULL )
+        {
+                ProcessGPGGA(buf, bufSize);
+        }
+        else if( strcmp(addressField, "GPGSA") == NULL )
+        {
+                ProcessGPGSA(buf, bufSize);
+        }
+        else if( strcmp(addressField, "GPGSV") == NULL )
+        {
+                ProcessGPGSV(buf, bufSize);
+        }
+        else if( strcmp(addressField, "GPRMB") == NULL )
+        {
+                ProcessGPRMB(buf, bufSize);
+        }
+        else if( strcmp(addressField, "GPRMC") == NULL )
+        {
+                ProcessGPRMC(buf, bufSize);
+        }
+        else if( strcmp(addressField, "GPZDA") == NULL )
+        {
+                ProcessGPZDA(buf, bufSize);
+        }
+		/////////
+		/////////
+		/////////
+		else if( strcmp(addressField, "GPGLL") == NULL )
+        {
+            //    
+        }
+		else if( strcmp(addressField, "GPVTG") == NULL )
+        {
+            //    
+        }
+		else if( strcmp(addressField, "GPMSS") == NULL )
+        {
+            //    
+        }
+		else if( strcmp(addressField, "GPMSK") == NULL )
+        {
+            //    
+        }		
+		else if( strcmp(addressField, "GPALM") == NULL )
+        {
+            //    can't find any complete sentence to check it out.
+        }			
+		else if( strcmp(addressField, "GPXTE") == NULL )
+        {
+            //    
+        }
+		else if( strcmp(addressField, "GPRTE") == NULL )
+        {
+            //    
+        }				
+		else if( strcmp(addressField, "GPBWC") == NULL )
+        {
+            //    
+        }	
+		else if( strcmp(addressField, "GPBOD") == NULL )
+        {
+            //    
+        }			
+		else if( strcmp(addressField, "GPAPB") == NULL )
+        {
+            //    
+        }			
+		else if( strcmp(addressField, "GPAAM") == NULL )
+        {
+            //    
+        }			
+		else if( strcmp(addressField, "GPWPL") == NULL )
+        {
+            //    
+        }		
+		
+		// Proprietary sentences
+		
+		// Garmin
+		else if( strcmp(addressField, "HCHDG") == NULL )
+        {
+		    // Compass output is used on Garmin etrex summit, vista , and 76S receivers to output the value of the internal flux-gate compass. 
+			// Only the magnetic heading and magnetic variation is shown in the message.
+            //    ProcessGPZDA(buf, bufSize);
+        }
+		else if( strcmp(addressField, "PGRME") == NULL )
+        {
+		
+		}
+		else if( strcmp(addressField, "PGRMZ") == NULL )
+        {
+		
+		}
+		else if( strcmp(addressField, "PGRMM") == NULL )
+        {
+		
+		}
 
-	m_GPSInfo.m_dwCommandCount++;
+		
+		// Sony
+		else if( strcmp(addressField, "PSNY") == NULL )
+        {
+		 // useless but ok... i will give it a try
+		 
+		}
+
+		
+
+        m_GPSInfo.m_dwCommandCount++;
 }
 //---------------------------------------------------------------------------
 GPSInfo& NMEAParser::GetActualGPSInfo()
